@@ -32,7 +32,7 @@
 %                  col 18:    IODE   ....... Issue of Data Ephemeris
 %                  col 19:    GPS_wk ....... GPS week
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function ephemeris = read_rinex_nav( filename )
+function [header, ephemeris] = read_rinex_nav( filename )
 
 fid = fopen(filename);
 
@@ -41,10 +41,31 @@ if fid == -1
     return;
 end
 
+header = {};
 % skip through header
 end_of_header = 0;
 while end_of_header == 0
     current_line = fgetl(fid);
+    
+    if strfind(current_line,'RINEX VERSION / TYPE')
+        [header.version header.type] = parsef(current_line, {'F9.2' 11 'X' 'A1'});
+    end
+    if strfind(current_line,'PGM / RUN BY / DATE')
+        [header.pgm header.runBy header.date] = parsef(current_line, {'A20' 'A20' 'A20'});
+    end
+     if strfind(current_line,'ION ALPHA')        
+         [header.A0 header.A1 header.A2 header.A3] = parsef(current_line, { 2 'X' 'D12.4' 'D12.4' 'D12.4' 'D12.4'});
+     end
+     if strfind(current_line,'ION BETA')
+         [header.B0 header.B1 header.B2 header.B3] = parsef(current_line, {2 'X' 'D12.4' 'D12.4' 'D12.4' 'D12.4'});
+     end
+     if strfind(current_line,'DELTA-UTC: A0,A1,T,W')
+         [header.deltaA0 header.deltaA1 header.deltaT header.deltaW] = parsef(current_line, { 3 'X' 'D19.12' 'D19.12' 'I9' 'I9'});
+     end
+     if strfind(current_line,'LEAP SECONDS')
+         [header.leapSeconds] = parsef(current_line, {'I6'});
+     end
+    
     if strfind(current_line,'END OF HEADER')
         end_of_header=1;
     end
