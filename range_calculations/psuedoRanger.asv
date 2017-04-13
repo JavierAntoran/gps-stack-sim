@@ -53,15 +53,11 @@ for i = 1:total_SV
 end
 
 
-[peak, rdelay_samples] = max(corrsearch(:,Lchip * pulseLength:end),[], 2);
-rdelay = rdelay_samples * Tm;
+[peak, receiveddelay] = max(corrsearch(:,Lchip * pulseLength:end),[], 2);
 
-cicles = 98;
-bad_pr = (cicles * Tchip + rdelay) * c;
-%%
 
 t = 0:Tm:Tchip-Tm; %muestras de senal recibida
 plot(t, delayCA(1,:));
-%
+%%
 corrt = -Tchip+Tm:Tm:Tchip-Tm;
 plot(corrt, corrsearch(3,:));
