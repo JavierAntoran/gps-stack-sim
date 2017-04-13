@@ -43,15 +43,18 @@ Tm = 1 / fm;
 
 samples_chip = Lchip * pulseLength;
 
-CA(CA==0) = -1;
+M = 2;
 pulso = ones(1, pulseLength);
 p = pulso;%pulso/sqrt(sum(pulso .^ 2));
 %
+delayCA = zeros(total_SV, Lchip * pulseLength);
 corrsearch = zeros(total_SV, Lchip * pulseLength * 2 -1);
 
 sCA = kron(CA, p);
 round_delay = mod(round(delayVec .* fm), samples_chip); %precision loss with round augment fm
-delayCA  = cell2mat(arrayfun(@(k) circshift(sCA(k,:),round_delay(k) , 2)', 1:size(sCA,1),'uni',0))';
+
+delayCA = circshift(sCA, round_delay ]);
+delayCA  = cell2mat(arrayfun(@(k) circshift(sCA(k,:),[round_delay(k) 0]), 1:size(sCA,1), 'uni', 0));
 for i = 1:total_SV
     corrsearch(i, :) = xcorr(delayCA(i,: ), sCA(i, :));
 end
