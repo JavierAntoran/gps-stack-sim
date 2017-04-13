@@ -11,8 +11,8 @@ end;
 
 hay = (poli == 1);
 
-regist = zeros(1,L);
-regist(1) = 1; % puede ser que todos deban ser 1
+regist = ones(1,L);
+%regist(1) = 1; % puede ser que todos deban ser 1
 
 out = zeros(1,Lt);
 
