@@ -1,4 +1,4 @@
-function [ satp ] = rinex2ecef( r_head, r_eph )
+function [ satp, orbit_parameters ] = rinex2ecef( r_head, r_eph )
 %RINEX2ECEF Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -90,11 +90,20 @@ for ii = 1:nn
     x1 = cos(u)*r;
     y1 = sin(u)*r;
 
-    % ECEF coordinates
+    % ECEF coordinates    
     satp(1,ii) = r_eph.PRN(ii);
     satp(2,ii) = x1*cos(Omega)-y1*cos(i)*sin(Omega);
     satp(3,ii) = x1*sin(Omega)+y1*cos(i)*cos(Omega);
-    satp(4,ii) = y1*sin(i);      
+    satp(4,ii) = y1*sin(i);  
+    
+    orbit_parameters.svid(ii) = r_eph.PRN(ii);
+    orbit_parameters.E(ii) = E;
+    orbit_parameters.A(ii) = a(ii);
+    orbit_parameters.I(ii) = i;
+    orbit_parameters.Omega(ii) = Omega;
+    orbit_parameters.v(ii) = v;
+    orbit_parameters.e = r_eph.e;
+    
 end
 
 end
