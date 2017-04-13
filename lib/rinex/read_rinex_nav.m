@@ -32,7 +32,7 @@
 %                  col 18:    IODE   ....... Issue of Data Ephemeris
 %                  col 19:    GPS_wk ....... GPS week
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [EPH ,header] = read_rinex_nav( filename )
+function [EPH ,header] = read_rinex_nav( filename, n_brc_msgs)
 
 fid = fopen(filename);
 
@@ -44,7 +44,7 @@ end
 header = {};
 % skip through header
 end_of_header = 0;
-while end_of_header == 0
+while end_of_header == 0 
     current_line = fgetl(fid);
     
     if strfind(current_line,'RINEX VERSION / TYPE')
@@ -72,7 +72,7 @@ while end_of_header == 0
 end
 
 j = 0;
-while feof(fid) ~= 1
+while feof(fid) ~= 1 && j < n_brc_msgs
     j = j+1;
     
     current_line = fgetl(fid);
