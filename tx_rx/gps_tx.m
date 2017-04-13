@@ -7,7 +7,7 @@ end
 c = 2.99792458e8;
 base_clock = 10.23e6; %reloj atomico super DEP
 %space vehicles c/a codes differ by the tap on the second register
-total_SV = 4;
+total_SV = 32;
 
 % C/A CODE GENERATION
 Lchip = 1023;
@@ -19,7 +19,7 @@ f_chip = base_clock / 10;
 Tchip = Lchip / f_chip;
 
 % GET SAT POSITIONS ECEF
-[eph, head] = read_rinex_nav(file,total_SV);
+[eph, head] = read_rinex_nav(file, total_SV);
 
 satp = rinex2ecef(head, eph, time);
 
