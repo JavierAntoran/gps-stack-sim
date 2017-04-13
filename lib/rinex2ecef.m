@@ -1,4 +1,4 @@
-function [ satp, orbit_parameters ] = rinex2ecef( r_head, r_eph )
+function [ satp, orbit_parameters ] = rinex2ecef( r_head, r_eph ,tsv )
 %RINEX2ECEF Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -30,8 +30,6 @@ function [ satp, orbit_parameters ] = rinex2ecef( r_head, r_eph )
 GM = 3.986005e14;             % earth's universal gravitational [m^3/s^2]
 c = 2.99792458e8;             % speed of light (m/s)
 omegae_dot = 7.2921151467e-5; % earth's rotation rate (rad/sec)
-
-tsv=r_head.deltaT;
 
 a = (r_eph.sqrtA).^2;
 

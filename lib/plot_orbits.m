@@ -1,4 +1,4 @@
-function [ f ] = plot_orbits( orbit_parameters, earth_surface_image )
+function [ f ] = plot_orbits( orbit_parameters, earth_surface_image)
 %PLOT_ORBITS Summary of this function goes here
 %   Detailed explanation goes here
 % Based on:
@@ -15,13 +15,16 @@ function [ f ] = plot_orbits( orbit_parameters, earth_surface_image )
 % Email: moeinmehrtash@yahoo.com       
 
 
-
-space_color = 'k';
 npanels = 180;   % Number of globe panels around the equator deg/panel = 360/npanels
 alpha   = 1; % globe transparency level, 1 = opaque, through 0 = invisible
-%GMST0 = []; % Don't set up rotatable globe (ECEF)
-GMST0 = 4.89496121282306; % Set up a rotatable globe at J2000.0
+GMST0 = []; % Don't set up rotatable globe (ECEF)
+% GMST0 = 4.89496121282306; % Set up a rotatable globe at J2000.0
 
+f = figure
+
+axis equal;
+axis auto;
+axis vis3d;
 
 [m,n]=size(orbit_parameters.svid);
 
@@ -32,23 +35,8 @@ Inc=orbit_parameters.I;
 Omega=orbit_parameters.Omega;
 v=orbit_parameters.v;
 
-%f = figure('Color', space_color);
-f = figure
 
-% hold on;
-
-% Turn off the normal axes
-% 
-% set(gca, 'NextPlot','add', 'Visible','off');
-% 
-% axis equal;
-% axis auto;
-% 
-% % Set initial view
-% 
-% view(0,30);
-% 
-% axis vis3d;
+hold on;
 
 for i=1:n
     ii=num2str(i);
@@ -79,7 +67,7 @@ for i=1:n
     yp=x0*sin(Omega(i))+y0*cos(Inc(i))*cos(Omega(i));
     zp=y0*sin(Inc(i));
 
-    plot3(xp,yp,zp,'wo','Linewidth',2); % plot true anomaly
+    plot3(xp,yp,zp,'ko','Linewidth',2); % plot true anomaly
     text(xp+.1*xp,yp+.1*yp,zp+.1*zp,Name_SV);
 
 
@@ -102,7 +90,8 @@ for i=1:n
 
  
 end
-% I, J ,K vectors
+
+% % I, J ,K vectors
 R=6399592;
 
 plot3([0,2*R],[0 0],[0 0],'black','Linewidth',2); plot3(2*R,0,0,'black>','Linewidth',2.5);
@@ -141,7 +130,7 @@ cdata = imread(earth_surface_image);
 
 set(globe, 'FaceColor', 'texturemap', 'CData', cdata, 'FaceAlpha', alpha, 'EdgeColor', 'none');
 
-hold on
+
 az = 120;
 el = 30;
 view(az, el);
