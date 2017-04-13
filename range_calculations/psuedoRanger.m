@@ -18,8 +18,8 @@ f_chip = base_clock / 10;
 Tchip = Lchip/f_chip;
 % GET SAT POSITIONS ECEF
 
-[r_eph, r_head] = read_rinex_nav('brdc0920.17n',total_SV);
-satp = rinex2ecef(r_head, r_eph);
+[eph, head] = read_rinex_nav('brdc0920.17n',total_SV);
+satp = rinex2ecef(head, eph);
 SVx = satp(2,:);
 SVy = satp(3,:);
 SVz = satp(4,:);

@@ -18,8 +18,8 @@ f_chip = base_clock / 10;
 Tchip = Lchip/f_chip;
 % GET SAT POSITIONS ECEF
 
-[r_eph, r_head] = read_rinex_nav('brdc0920.17n',total_SV);
-satp = rinex2ecef(r_head, r_eph);
+[eph, head] = read_rinex_nav('brdc0920.17n',total_SV);
+satp = rinex2ecef(head, eph);
 SVx = satp(2,:);
 SVy = satp(3,:);
 SVz = satp(4,:);
@@ -62,17 +62,14 @@ rdelay = rdelay_samples * Tm;
 
 cicles = floor(delayVec ./ Tchip); %obtain extra cicles from delay vec (unrealisic)
 
-bad_pr = cicles * Tchip * c + 
+bad_pr = (cicles * Tchip + rdelay) * c;
 
-%bad_pr = (cicles * Tchip + rdelay) * c;
-
-ok_d = (distVec - cicles * Tchip * c );
-code_d = rdelay * c;
-error = (code_d - ok_d)
+error = mean(distVec - bad_pr)
 %%
-
+figure
 t = 0:Tm:Tchip-Tm; %muestras de senal recibida
 plot(t, delayCA(1,:));
 %
+figure
 corrt = -Tchip+Tm:Tm:Tchip-Tm;
 plot(corrt, corrsearch(4,:));
