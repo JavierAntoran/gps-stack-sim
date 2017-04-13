@@ -1,4 +1,4 @@
-% Lucas Ward
+% Lucas Ward Javier Antoran Alberto Mur
 % ASEN 5090
 % Read the RINEX navigation file.  The header is skipped because
 % information in it (a0, a1, iono alpha and beta parameters) is not 
@@ -32,7 +32,7 @@
 %                  col 18:    IODE   ....... Issue of Data Ephemeris
 %                  col 19:    GPS_wk ....... GPS week
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [header, ephemeris] = read_rinex_nav( filename )
+function [EPH ,header] = read_rinex_nav( filename )
 
 fid = fopen(filename);
 
@@ -112,5 +112,28 @@ while feof(fid) ~= 1
     [ gps_week, toc ] = cal2gpstime(varargin);
 
     ephemeris(j,:) = [PRN, M0, delta_n, e, sqrtA, OMEGA, i0, omega, OMEGA_dot, i_dot, Cuc, Cus, Crc, Crs, Cic, Cis, toe, IODE, GPS_wk,toc,af0,af1,af2,TGD];
+    EPH.PRN(j) = PRN;
+    EPH.M0(j) = M0;
+    EPH.delta_n(j) = delta_n;
+    EPH.e(j) = e;
+    EPH.sqrtA(j) = sqrtA;
+    EPH.OMEGA(j) = OMEGA;
+    EPH.i0(j) = i0;
+    EPH.omega(j) = omega;
+    EPH.OMEGA_dot(j) = OMEGA_dot;
+    EPH.i_dot(j) = i_dot;
+    EPH.Cuc(j) = Cuc;
+    EPH.Cus(j) = Cus;
+    EPH.Crc(j) = Crc;
+    EPH.Crs(j) = Crs;
+    EPH.Cis(j) = Cis;
+    EPH.Cic(j) = Cic;
+    EPH.toe(j) = toe; 
+    EPH.IODE(j) = IODE;
+    EPH.GPS_wk(j) = GPS_wk;
+    EPH.toc(j) = toc;
+    EPH.af0(j) = af0;
+    EPH.af1(j) = af1;
+    EPH.af2(j) = af2;
+    EPH.TGD(j) = TGD;
 end
-
