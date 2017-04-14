@@ -6,7 +6,7 @@ ROOTDIR = fileparts(get_lib_path);
 almFile = strcat(ROOTDIR,'/files/Almanac/W918.alm');
 ephFile = strcat(ROOTDIR,'/files/ephemeris/brdc0920.17n');
 
-total_SV = 4;
+total_SV = 6;
 [eph, head] = read_rinex_nav('brdc0920.17n', 1:total_SV);
 [~, gps_sec] = cal2gpstime([2017 04 04 16 51 30]);
 time = gps_sec;
@@ -35,7 +35,17 @@ srx = sum(delay_CA, 1);
 
 %obtain SV postions 
 satp = rinex2ecef(head, eph, time);
+rec_sCA = CA_gen(L); % generamos codigos CA de todos los satelites
+%check vissible SV xcorr search
 
-[ index, pr_delay ] = SV_finder( srx, L );
+checkSV = 1:32; %checks all possi
+corrsearch = zeros(total_SV, 2 * L * 1023 - 1);
+for i = checkSV
+    corrsearch(i,:) = xcorr(srx, rec_sCA(i, :));
+end
 
+detect_lim = L * 1023 / 2 - 1;
+[peak, rdelay_samples] = max(corrsearch, [], 2);
 
+aquired = checkSV(peak >= detect_lim) %detected SV index
+pr_delay = rdelay_samples(peak >= detect_lim); 

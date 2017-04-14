@@ -10,7 +10,7 @@ P_amb=101; %kilo pascal
 P_vap=.86;
 % satellite position ecef (I think)
 total_SV = 20;
-[eph, head] = read_rinex_nav('brdc0920.17n',total_SV);
+[eph, head] = read_rinex_nav('brdc0920.17n',1:total_SV);
 CURRENT_TIME = head.deltaT;
 satp = rinex2ecef(head, eph, CURRENT_TIME);
 SVx = satp(2,:);

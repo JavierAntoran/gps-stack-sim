@@ -1,6 +1,5 @@
-function [ output_args ] = gps_receiver( input_args )
-%GPS_RECEIVER Summary of this function goes here
-%   Detailed explanation goes here
+function [ x, y, z ] = gps_receiver( head, eph, time, srx, nav_cicles, L )
+
 
 
 end
