@@ -75,7 +75,7 @@ EPH.PRN = [];
 
 j = 0;
 while feof(fid) ~= 1
-    j = j+1;
+    
     
     current_line = fgetl(fid);
     % parse epoch line (ignores SV clock bias, drift, and drift rate)
@@ -84,7 +84,7 @@ while feof(fid) ~= 1
     if (~any(sv_IDs == PRN) || any(EPH.PRN == PRN)) 
         continue;
     end
-
+    j = j+1;
     % Broadcast orbit line 1
     current_line = fgetl(fid);
     [IODE Crs delta_n M0] = parsef(current_line, {'D22.12' 'D19.12' 'D19.12' 'D19.12'});
