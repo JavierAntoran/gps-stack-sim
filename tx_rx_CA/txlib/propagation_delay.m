@@ -11,7 +11,7 @@ SVz = satp(4,:);
 % SET receiver position
 gx = Rpos(1);
 gy = Rpos(2);
-gz = Rpos(2);
+gz = Rpos(3);
 
 % get exact distance from SAT to receiver
 distVec = ECEFrange(SVx, SVy, SVz, gx, gy, gz);

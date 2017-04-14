@@ -8,7 +8,7 @@ c = 2.99792458e8;
 base_clock = 10.23e6; %reloj atomico super DEP
 %space vehicles c/a codes differ by the tap on the second register
 % lets get some codes
-total_SV = 20;
+total_SV = 4;
 Lchip = 1023;
 CA = zeros(total_SV, Lchip);
 for i = 1:total_SV
@@ -28,9 +28,10 @@ SVx = satp(2,:);
 SVy = satp(3,:);
 SVz = satp(4,:);
 
-gx = 3.8941e6;
-gy = 3.189e5;
-gz = 5.0242e5;
+Rpos = [ 3.894192036606761e+06 3.189618244369670e+05 5.024275884645306e+06];
+gx = Rpos(1);
+gy = Rpos(2);
+gz = Rpos(3);
 
 distVec = ECEFrange(SVx, SVy, SVz, gx, gy, gz);
 delayVec = distVec ./ c;
@@ -61,12 +62,13 @@ end
 [peak, rdelay_samples] = max(corrsearch, [], 2);
 rdelay_samples = mod(rdelay_samples, samples_chip);
 rdelay = rdelay_samples * Tm;
+%rdelay * c
 % calculate overlap cicles
 
 cicles = floor(delayVec ./ Tchip); %obtain extra cicles from delay vec (unrealisic)
 
-bad_pr = (cicles * Tchip + rdelay) * c;
-error = mean(abs(distVec - bad_pr))
+bad_pr = (cicles * Tchip + rdelay) * c
+%error = mean(abs(distVec - bad_pr))
 %%
 figure
 t = 0:Tm:Tchip-Tm; %muestras de senal recibida

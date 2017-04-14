@@ -13,7 +13,7 @@ delay_CA  = cell2mat(arrayfun(@(k) circshift(sCA(k,:),round_delay(k) , 2)', 1:si
 
 % calculate overlap cicles from propagation with nav message time
 % send as nav message (time info)
-cicles = floor(prop_delay ./ Tchip);
+cicles = floor((prop_delay + other_delay') ./ Tchip);
 
 end
 
