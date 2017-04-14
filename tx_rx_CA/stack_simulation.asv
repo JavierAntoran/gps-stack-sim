@@ -3,10 +3,10 @@ clear all
 close all
 clc
 ROOTDIR = fileparts(get_lib_path);
-almFile = strcat(ROOTDIR,'/files/almanac/W918.alm');
+almFile = strcat(ROOTDIR,'/files/Almanac/W918.alm');
 ephFile = strcat(ROOTDIR,'/files/ephemeris/brdc0920.17n');
 
-total_SV = 22;
+total_SV = 4;
 [eph, head] = read_rinex_nav('brdc0920.17n', 1:total_SV);
 [~, gps_sec] = cal2gpstime([2017 04 04 16 51 30]);
 time = gps_sec + head.leapSeconds;
@@ -15,7 +15,7 @@ c = 2.99792458e8;
 base_clock = 10.23e6; %reloj atomico super DEP
 
 
-L = 50; %samples per CA bit. fm = fchip * L. More renults ib better precision
+L = 500; %samples per CA bit. fm = fchip * L. More renults ib better precision
 
 %define receiver pos
 Rpos = [ 3.894192036606761e+06 3.189618244369670e+05 5.024275884645306e+06]; % north france
@@ -53,8 +53,6 @@ Tchip = Lchip/f_chip;
 samples_chip = Lchip * L;
 
 [ index, pr_delay_abs_samples ] = SV_finder( srx, L );
-index
-%%
 pr_delay_samples = mod(pr_delay_abs_samples, samples_chip);
 pr_delay = pr_delay_samples * Tm;
 
@@ -119,4 +117,4 @@ while (norm(delta_x(1:3)) > 5)
     rec_pos = N_rec_pos(i, :);
 end
 
-norm(Rpos - rec_pos)
+(Rpos - rec_pos)

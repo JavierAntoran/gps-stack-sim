@@ -12,7 +12,7 @@ end
 max(corrsearch(3, :))
 
 
-detect_lim = L * 1023 * 2 / 5 - 1; % lowered threshold because of noise;
+detect_lim = L * 1023 / 2 - 1;
 [peak, rdelay_samples] = max(corrsearch, [], 2);
 
 aquired = checkSV(peak >= detect_lim);%detected SV index
