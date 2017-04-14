@@ -15,10 +15,11 @@ gps_sec = gps_sec+r_head.leapSeconds;
 
 image_file = fullfile(ROOTDIR,'/sv/land_ocean_ice_2048.png');
 
+
 %%
 plot_orbits(orbit_parameters, image_file)
 
-obsLoc = [ 3.894192036606761e+06     3.189618244369670e+05     5.024275884645306e+06];
+obsLoc = [ 4.770018562312017e+06  -0.073982996893586e+06     4.219556193116981e+06];
 scatter3(obsLoc(1), obsLoc(2), obsLoc(3), 'yo')
 
 ax = gca;
