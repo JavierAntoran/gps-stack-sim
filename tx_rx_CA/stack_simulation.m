@@ -6,8 +6,9 @@ ROOTDIR = fileparts(get_lib_path);
 almFile = strcat(ROOTDIR,'/files/almanac/W918.alm');
 ephFile = strcat(ROOTDIR,'/files/ephemeris/brdc0920.17n');
 
-total_SV = 22;
-[eph, head] = read_rinex_nav('brdc0920.17n', 1:total_SV);
+visible_SV = [1 4 6 23 2 5];
+[eph, head] = read_rinex_nav('brdc0920.17n', visible_SV);
+visible_SV = eph.PRN;
 [~, gps_sec] = cal2gpstime([2017 04 04 16 51 30]);
 time = gps_sec + head.leapSeconds;
 
@@ -21,8 +22,7 @@ L = 50; %samples per CA bit. fm = fchip * L. More renults ib better precision
 Rpos = [ 3.894192036606761e+06 3.189618244369670e+05 5.024275884645306e+06]; % north france
 % generate GPS signals
 
-sCA = CA_gen(L);
-sCA = sCA(1:total_SV, :);
+sCA = CA_gen(L, visible_SV);
 %
 % modulation demo goes here
 %
@@ -33,18 +33,13 @@ sCA = sCA(1:total_SV, :);
 srx = sum(delay_CA, 1);
 
 % receiver. cicles are obtained as nav message
-
+%%
 %obtain SV postions 
-satp = rinex2ecef(head, eph, time);
-SVx = satp(2,:);
-SVy = satp(3,:);
-SVz = satp(4,:);
-pSV = [SVx; SVy; SVz]';
 
 c = 2.99792458e8;
 base_clock = 10.23e6; %reloj atomico super DEP
 
-%L = 50; %samples per CA bit. 
+L = 50; %samples per CA bit. 
 f_chip = base_clock / 10;
 fm = f_chip * L; %More results in better precision
 Tm = 1/fm;
@@ -53,8 +48,19 @@ Tchip = Lchip/f_chip;
 samples_chip = Lchip * L;
 
 [ index, pr_delay_abs_samples ] = SV_finder( srx, L );
-index
-%%
+
+ROOTDIR = fileparts(get_lib_path);
+almFile = strcat(ROOTDIR,'/files/almanac/W918.alm');
+ephFile = strcat(ROOTDIR,'/files/ephemeris/brdc0920.17n');
+
+[eph, head] = read_rinex_nav('brdc0920.17n', index);
+
+satp = rinex2ecef(head, eph, time);
+SVx = satp(2,:);
+SVy = satp(3,:);
+SVz = satp(4,:);
+pSV = [SVx; SVy; SVz]';
+%
 pr_delay_samples = mod(pr_delay_abs_samples, samples_chip);
 pr_delay = pr_delay_samples * Tm;
 
@@ -119,4 +125,4 @@ while (norm(delta_x(1:3)) > 5)
     rec_pos = N_rec_pos(i, :);
 end
 
-norm(Rpos - rec_pos)
+(Rpos - rec_pos)

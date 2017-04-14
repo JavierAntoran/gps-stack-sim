@@ -9,7 +9,6 @@ corrsearch = zeros(max_SV, 2 * L * 1023 - 1);
 for i = checkSV
     corrsearch(i,:) = xcorr(srx, rec_sCA(i, :));
 end
-max(corrsearch(3, :))
 
 
 detect_lim = L * 1023 * 2 / 5 - 1; % lowered threshold because of noise;
