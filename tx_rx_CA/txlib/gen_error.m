@@ -1,10 +1,11 @@
-function [ sat_clock_offset, sat_clock_rel, iono_T, trop_T_equiv ] = gen_channel( head, eph, time, Rpos )
-
+function [ sat_clock_offset, sat_clock_rel, iono_T, trop_T_equiv ] = gen_error( head, eph, time, Rpos )
+% includes tropo, iono, clock error and relativistic clock
+% although the clock errors are not strictly caused by the channel
 if nargin == 2
     time = head.deltaT;
 end
 CURRENT_TIME = time;
-
+c = 2.99792458e8;
 GM = 3.986005e14; %Grav constant * Earth mass
 F = -2 * sqrt(GM) / c.^2;
 T_amb=20; %degrees celsius
@@ -12,7 +13,7 @@ P_amb=101; %kilo pascal
 P_vap=.86;
 % satellite position ecef (I think)
 
-satp = rinex2ecef(head, eph);
+satp = rinex2ecef(head, eph, time);
 SVx = satp(2,:);
 SVy = satp(3,:);
 SVz = satp(4,:);
@@ -47,7 +48,7 @@ sat_clock_rel=Error_Satellite_Clock_Relavastic(F,eph.e,A,meanAnomaly,tgd); %sec
     
 %  ionospheric error non iterative
 Alpha = [head.A0 head.A1 head.A2 head.A3];
-Beta = [head.B0 hewad.B1 head.B2 head.B3];
+Beta = [head.B0 head.B1 head.B2 head.B3];
 iono_T = Error_Ionospheric_Klobuchar(rec_pos, pSV ,Alpha, Beta, CURRENT_TIME);%(Sec)
 %R_iono=iono_T * c;   
 

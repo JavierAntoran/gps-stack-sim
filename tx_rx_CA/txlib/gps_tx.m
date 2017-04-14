@@ -1,5 +1,5 @@
 function [s_bb, cicles, nSV] = gps_tx(file, time, Rpos, pulseLength, channel)
-
+% CA code generation and propagation delay
 if nargin == 2
     channel = true;
 end
