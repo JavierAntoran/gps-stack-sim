@@ -33,6 +33,9 @@ sCA = CA_gen(L, visible_SV);
 srx = sum(delay_CA, 1);
 
 % receiver. cicles are obtained as nav message
+%% This is the same as below but in a function
+[ xyz_ecef ] = gps_receiver( 'brdc0920.17n', time, srx, cicles, L );
+(Rpos - xyz_ecef)
 %%
 %obtain SV postions 
 
