@@ -32,7 +32,7 @@
 %                  col 18:    IODE   ....... Issue of Data Ephemeris
 %                  col 19:    GPS_wk ....... GPS week
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [EPH ,header] = read_rinex_nav( filename, n_brc_msgs)
+function [EPH ,header] = read_rinex_nav( filename, sv_IDs)
 
 fid = fopen(filename);
 
@@ -71,14 +71,19 @@ while end_of_header == 0
     end
 end
 
+EPH.PRN = [];
+
 j = 0;
-while feof(fid) ~= 1 && j < n_brc_msgs
+while feof(fid) ~= 1
     j = j+1;
     
     current_line = fgetl(fid);
     % parse epoch line (ignores SV clock bias, drift, and drift rate)
     [PRN, Y, M, D, H, min, sec,af0,af1,af2] = parsef(current_line, {'I2' 'I3' 'I3' 'I3' 'I3' 'I3' ...
                                                   'F5.1','D19.12','D19.12','D19.12'});
+    if (~any(sv_IDs == PRN) || any(EPH.PRN == PRN)) 
+        continue;
+    end
 
     % Broadcast orbit line 1
     current_line = fgetl(fid);
