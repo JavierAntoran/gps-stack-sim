@@ -70,7 +70,7 @@ rb_message = 50;
 fm = 4 * f_carrier;
 Tm = 1/fm;
 
-dur = 0.1;
+dur = 0.4;
 t = 0:Tm:dur;
 
 carrier = sin(2*pi*f_carrier*t);
@@ -91,24 +91,16 @@ figure
 fn = linspace(-1/(2*Tm), 1/(2*Tm), length(xcorr(carrier)));
 DEP_carrier = 10*log10(abs(fftshift(fft(xcorr(carrier)))));
 ref = max(DEP_carrier);
-a = plot(fn, DEP_carrier-ref);
+plot(fn, DEP_carrier)
 hold on
 DEP_mod_nav = 10*log10(abs(fftshift(fft(xcorr(s_dat)))));
 DEP_mod_CA = 10*log10(abs(fftshift(fft(xcorr(s_CA)))));
-b = plot(fn, DEP_mod_nav-ref);
-c = plot(fn, DEP_mod_CA-ref);
+plot(fn, DEP_mod_nav)
+plot(fn, DEP_mod_CA)
 xlim([f_carrier - 1.5*f_chip, f_carrier + 1.5*f_chip]);
 title('DEP')
 xlabel('hercios');
 ylabel('dB')
 grid on
-legend('carrier', 'nav message', 'CA');
-%% time domain plotting
-figure
-hold on
-plot(t,s_CA)
-plot(t,ca_samples)
-plot(t,message_samples)
-title('senal SV1 en el tiempo')
-legend('senal modulada','secuencia pn', 'data');
-xlabel('time (s)')
+legend('carrier', 'spread','data non spread');
+%%
