@@ -100,7 +100,7 @@ rec_pos = [0 0 0];
 i = 1;
 
 pseudo_range(1,:) = pseudo_range0;
-%rec_pos = N_rec_pos(1, :);
+rec_pos = N_rec_pos(1, :);
 delta_x = ones(1,4) * 1000;
 
 while (norm(delta_x(1:3)) > 1)
@@ -178,7 +178,7 @@ N_SV = 1;
 subplot(3, 1, 1)
 plot(R_c_offset(:, N_SV))
 line(xlim, [c*sat_clock_offset_0(N_SV), c*sat_clock_offset_0(N_SV)], 'Color', 'r');
-t = sprintf('clock drift SV %d, (small diff because only dependent on ps because of time)', N_SV);
+t = sprintf('clock drift SV %d', N_SV);
 title(t)
 xlabel('iterations')
 ylabel('error (m)')
