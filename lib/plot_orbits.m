@@ -1,4 +1,4 @@
-function [ f ] = plot_orbits( orbit_parameters, earth_surface_image)
+function [ f ] = plot_orbits( sat_xyz, orbits_xyz, earth_surface_image, varargin)
 %PLOT_ORBITS Summary of this function goes here
 %   Detailed explanation goes here
 % Based on:
@@ -15,6 +15,12 @@ function [ f ] = plot_orbits( orbit_parameters, earth_surface_image)
 % Email: moeinmehrtash@yahoo.com       
 
 
+vis_sv = [];
+
+if (nargin > 2) 
+    vis_sv = varargin{1}
+end
+
 npanels = 180;   % Number of globe panels around the equator deg/panel = 360/npanels
 alpha   = 1; % globe transparency level, 1 = opaque, through 0 = invisible
 GMST0 = []; % Don't set up rotatable globe (ECEF)
@@ -26,81 +32,34 @@ axis equal;
 axis auto;
 axis vis3d;
 
-[m,n]=size(orbit_parameters.svid);
-
-E=orbit_parameters.E;
-A=orbit_parameters.A;
-ec=orbit_parameters.e;
-Inc=orbit_parameters.I;
-Omega=orbit_parameters.Omega;
-v=orbit_parameters.v;
-
-
 hold on;
 
-for i=1:n
-    ii=num2str(i);
-    Name_SV=strcat('SV-',num2str(orbit_parameters.svid(i)));
+sv_no=size(sat_xyz,2);
+
+for i=1:sv_no
+    
+     if(~any(vis_sv == sat_xyz(1,i)))         
+         color = 'k';
+     else
+         color = 'b';
+     end
+    
+    Name_SV=strcat('SV-',num2str(sat_xyz(1,i)));
      
-    Nu=0:2*pi/100:2*pi;
-    r=A(i)*(1-ec(i)^2)./(1+ec(i).*cos(Nu));
-    x = r.*cos(Nu);
-    y = r.*sin(Nu);
-
-    xs=x.*cos(Omega(i))-y.*cos(Inc(i)).*sin(Omega(i));
-    ys=x.*sin(Omega(i))+y.*cos(Inc(i)).*cos(Omega(i));
-    zs=y.*sin(Inc(i));
-    plot3(xs,ys,zs,'Linestyle','-')
-
-    hold on
+    plot3(orbits_xyz(:,i,1),orbits_xyz(:,i,2),orbits_xyz(:,i,3),'Linestyle','-')
+    
     xlabel('Xaxis')
     ylabel('Yaxis')
     zlabel('Zaxis')
 
-
-
-    r0=A(i)*(1-ec(i)^2)/(1+ec(i)*cos(v(i)));
-    x0 = r0*cos(v(i));
-    y0 = r0*sin(v(i));
-
-    xp=x0*cos(Omega(i))-y0*cos(Inc(i))*sin(Omega(i));
-    yp=x0*sin(Omega(i))+y0*cos(Inc(i))*cos(Omega(i));
-    zp=y0*sin(Inc(i));
-
-    plot3(xp,yp,zp,'ko','Linewidth',2); % plot true anomaly
-    text(xp+.1*xp,yp+.1*yp,zp+.1*zp,Name_SV);
-
-
-    axis_data = get(gca);
-    xmin = axis_data.XLim(1);
-    xmax = axis_data.XLim(2);
-    ymin = axis_data.YLim(1);
-    ymax = axis_data.YLim(2);
-    zmin = axis_data.ZLim(1);
-    zmax = axis_data.ZLim(2);
-
-
-
-    % right ascending node line plot
-    xomega_max = xmax*cos(Omega(i)*pi/180);
-    xomega_min = xmin*cos(Omega(i)*pi/180);
-    yomega_max = ymax*sin(Omega(i)*pi/180);
-    yomega_min = ymin*sin(Omega(i)*pi/180);
-
-
- 
+    sv_x = sat_xyz(2,i);
+    sv_y = sat_xyz(3,i);
+    sv_z = sat_xyz(4,i);
+    
+    plot3(sv_x,sv_y,sv_z,strcat(color,'o'),'Linewidth',2); % plot true anomaly
+    text(sv_x+.1*sv_x,sv_y+.1*sv_y,sv_z+.1*sv_z,Name_SV);
 end
 
-% % I, J ,K vectors
-R=6399592;
-
-plot3([0,2*R],[0 0],[0 0],'black','Linewidth',2); plot3(2*R,0,0,'black>','Linewidth',2.5);
-plot3([0 0],[0,2*R],[0 0],'black','Linewidth',2); plot3(0,2*R,0,'black>','Linewidth',2.5);
-plot3([0 0],[0 0],[0,2*R],'black','Linewidth',2); plot3(0,0,2*R,'black^','Linewidth',2.5);
-
-xlabel('I');
-ylabel('J');
-zlabel('K');
 
 % Create a 3D meshgrid of the sphere points using the ellipsoid function
 % Mean spherical earth
@@ -108,6 +67,17 @@ zlabel('K');
 erad    = 6371008.7714; % equatorial radius (meters)
 prad    = 6371008.7714; % polar radius (meters)
 erot    = 7.2921158553e-5; % earth rotation rate (radians/sec)
+
+
+% I, J ,K, Vectors
+plot3([0,2*erad],[0 0],[0 0],'black','Linewidth',2); plot3(2*erad,0,0,'black>','Linewidth',2.5);
+plot3([0 0],[0,2*erad],[0 0],'black','Linewidth',2); plot3(0,2*erad,0,'black>','Linewidth',2.5);
+plot3([0 0],[0 0],[0,2*erad],'black','Linewidth',2); plot3(0,0,2*erad,'black^','Linewidth',2.5);
+
+xlabel('I');
+ylabel('J');
+zlabel('K');
+
 
 [x, y, z] = ellipsoid(0, 0, 0, erad, erad, prad, npanels);
 
@@ -129,7 +99,6 @@ cdata = imread(earth_surface_image);
 % a texturemap, which Matlab expects to be in cdata. Turn off the mesh edges.
 
 set(globe, 'FaceColor', 'texturemap', 'CData', cdata, 'FaceAlpha', alpha, 'EdgeColor', 'none');
-
 
 az = 120;
 el = 30;
