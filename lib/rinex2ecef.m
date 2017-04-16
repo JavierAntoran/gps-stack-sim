@@ -100,7 +100,8 @@ for ii = 1:nn
     orbit_parameters.I(ii) = i;
     orbit_parameters.Omega(ii) = Omega;
     orbit_parameters.v(ii) = v;
-    orbit_parameters.e = r_eph.e;
+    orbit_parameters.e(ii) = r_eph.e(ii);
+    orbit_parameters.r(ii) = r;
     
 end
 
