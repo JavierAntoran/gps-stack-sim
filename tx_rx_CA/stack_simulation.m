@@ -6,7 +6,7 @@ ROOTDIR = fileparts(get_lib_path);
 almFile = strcat(ROOTDIR,'/files/almanac/W918.alm');
 ephFile = strcat(ROOTDIR,'/files/ephemeris/brdc0920.17n');
 
-visible_SV = [1 8 2 5];
+visible_SV = [1 2 5 18];
 [eph, head] = read_rinex_nav('brdc0920.17n', visible_SV);
 visible_SV = eph.PRN;
 [~, gps_sec] = cal2gpstime([2017 04 04 16 51 30]);
@@ -125,11 +125,12 @@ while (norm(delta_x(1:3)) > 1)
     pseudo_range(i + 1, :) = pseudo_range0 -  R_c_offset(i, :) - R_iono(i, :) - R_trop(i, :);
     
     i = i + 1;
-    [G0, delta_x, N_rec_pos(i, :) ,B0]=Gen_G_DX_XYZ_B(pSV, rec_pos, pseudo_range(i, :));
+    [G_mat, delta_x, N_rec_pos(i, :)]=iterate_pr2xyz(pSV, rec_pos, pseudo_range(i, :));
     rec_pos = N_rec_pos(i, :);
+    clock_bias(i) = delta_x(4);
 end
 
-%(Rpos - rec_pos)
+(Rpos - rec_pos)
 %% plot position convergence
 figure
 subplot(3,1,1)
@@ -202,4 +203,13 @@ xlabel('iterations')
 ylabel('error (m)')
 legend('calculated value', 'real value')
 grid on
+%% Clock bias **B = deltax(4)**
+
 %% G matrix and DOPs
+
+Q = inv(G_mat' * G_mat);
+GDOP=sqrt(trace(Q))
+PDOP=sqrt(Q(1,1)+Q(2,2)+Q(3,3))
+HDOP=sqrt(Q(1,1)+Q(2,2))
+VDOP=sqrt(Q(1,1))
+TDOP=sqrt(Q(4,4))

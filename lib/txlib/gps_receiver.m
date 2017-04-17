@@ -58,7 +58,7 @@ i = 1;
 pseudo_range(1,:) = pseudo_range0;
 rec_pos = N_rec_pos(1, :);
 
-while (norm(delta_x(1:3)) > 5)
+while (norm(delta_x(1:3)) > 1)
    
     %clock drift
     Ttr = time - pseudo_range(i,:) ./ c;%gps time seconds
@@ -80,7 +80,7 @@ while (norm(delta_x(1:3)) > 5)
     pseudo_range(i + 1, :) = pseudo_range0 -  R_c_offset(i, :) - R_iono(i, :) - R_trop(i, :);
     
     i = i + 1;
-    [G0, delta_x, N_rec_pos(i, :) ,B0]=Gen_G_DX_XYZ_B(pSV, rec_pos, pseudo_range(i, :));
+    [A_mat, delta_x, N_rec_pos(i, :)] = iterate_pr2xyz(pSV, rec_pos, pseudo_range(i, :);
     rec_pos = N_rec_pos(i, :);
 end
 
