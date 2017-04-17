@@ -14,7 +14,7 @@
 %************************************************************************           
 
 
-function [E,A]=Calc_Azimuth_Elevation(Pos_Rcv,Pos_SV);
+function [E,A]=Calc_Azimuth_Elevation(Pos_Rcv,Pos_SV)
 
 R=Pos_SV-Pos_Rcv;               %vector from Reciever to Satellite
 

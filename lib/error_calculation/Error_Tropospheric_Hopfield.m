@@ -27,10 +27,10 @@ for i=1:m
 end
 
 %Zenith Hydrostatic Delay
-Kd=1.55208*10^(-4)*P_amb*(40136+148.72*T_amb)/(T_amb+273.16);
+Kd =1.55208*10^(-4)*P_amb*(40136+148.72*T_amb)/(T_amb+273.16);
 
 %Zenith Wet Delay
-Kw=-.282*P_vap/(T_amb+273.16)+8307.2*P_vap/(T_amb+273.16)^2;
+Kw =-.282*P_vap/(T_amb+273.16)+8307.2*P_vap/(T_amb+273.16)^2;
 
 for i=1:m
   Denom1(i)=sin(sqrt(El(i)^2+1.904*10^-3));
