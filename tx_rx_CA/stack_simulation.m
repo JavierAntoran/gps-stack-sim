@@ -90,6 +90,7 @@ P_amb=101; %kilo pascal
 P_vap=.86;
 %delay because time in space is not the same as on earth
 clock_relativistic=Error_Satellite_Clock_Relavastic(F,eph.e,A,meanAnomaly,tgd); %sec 
+%%
 R_rel_offset = clock_relativistic * c; 
 
 pseudo_range0 = (pseudo_range0 - R_rel_offset);
