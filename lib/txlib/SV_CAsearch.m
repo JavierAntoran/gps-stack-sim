@@ -1,4 +1,4 @@
-function [ aquired, pr_delay ] = SV_finder( srx, L )
+function [ aquired, pr_delay ] = SV_CAsearch( srx, L )
 % correlation search for satellites
 
 rec_sCA = CA_gen(L); % generamos codigos CA de todos los satelites

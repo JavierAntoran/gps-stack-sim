@@ -45,7 +45,7 @@ xlim([-Lchip, Lchip] / f_chip)
 
 delay = round(rand(1, size(PRN,1))*1023);
 delay_CA  = cell2mat(arrayfun(@(k) circshift(PRN(k,:), delay(k) , 2)', 1:size(PRN,1),'uni',0))';
-sats = [3 23];
+sats = [1 4 31];
 sCA = sum(delay_CA(sats,:),1);
 
 for i = 1:32

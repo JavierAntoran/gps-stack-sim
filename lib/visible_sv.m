@@ -8,7 +8,7 @@ WGS84.e2 = (8.1819190842622e-2).^2;
 rcv_xyz = [ 0 0 0 ];
 [rcv_xyz(1) rcv_xyz(2) rcv_xyz(3)]= LLAtoXYZ(rcv_lla(1), rcv_lla(2), rcv_lla(3),WGS84.a,WGS84.e2);
 
-los = (sat_xyz - rcv_xyz');
+los = (sat_xyz - kron(rcv_xyz', ones(1,size(sat_xyz,2))));
 
 lla2enu_tm = ltcmat(rcv_lla);
 

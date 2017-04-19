@@ -180,7 +180,7 @@ sat_xyz = [ eph.PRN; x; y; z ];
 
 sv_u=0:2*pi/100:2*pi;
 s_nu = numel(sv_u);
-r_o = kron(A'.*(1-(eph.e)'.^2),ones(1,size(sv_u,1)))./(1+(eph.e)'*cos(sv_u));
+r_o = kron(A'.*(1-(eph.e)'.^2),ones(1,s_nu))./(1+(eph.e)'*cos(sv_u));
 x_o = r_o.*kron(cos(sv_u), ones(sv_no,1));
 y_o = r_o.*kron(sin(sv_u), ones(sv_no,1));
 

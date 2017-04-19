@@ -10,7 +10,7 @@ Lchip = 1023;
 Tchip = Lchip/f_chip;
 samples_chip = Lchip * L;
 
-[ index, pr_delay_abs_samples ] = SV_finder( srx, L );
+[ index, pr_delay_abs_samples ] = SV_CAsearch( srx, L );
 
 [eph, head] = read_rinex_nav(file, index);
 
