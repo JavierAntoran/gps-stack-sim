@@ -1,5 +1,17 @@
 function [ aquired, pr_delay, phase_delay ] = SV_CA_doppler_search( srx, L, doppler_range, resolution)
-% correlation search for satellites in cope and phase
+%SV_CA_doppler_search s phase/code aquisition of CA code.
+%
+%SV_CA_doppler_search.m should be used if looking for precise results
+%
+%INPUT:
+%srx= received signal
+%L = samples per C/A code bit in srx
+%doppler_range = range to scan (tipically 10k)
+%resolution = frequency scan step size
+%OUTPUT
+%aquired = SVs found
+%pr_delay = time delay in samples (for positioning) (multiply by TM for seconds)
+%phase_delay = frequency shift in samples (multiply by resolution for hz)
 
 base_clock = 10.23e6;
 search_res = resolution;

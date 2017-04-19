@@ -2,6 +2,17 @@ function [ aquired, pr_delay, phase_delay  ] = plot_CA_fi_search(  srx, N_SV, Li
 %PLOT_CA_FI_SEARCH surface plot of phase/code aquisition of CA code.
 %for better performance sample frequency is dimished, 
 %SV_CA_doppler_search.m should be used if looking for precise results
+%
+%INPUT:
+%srx= received signal
+%N_SV = satellite number to plot
+%Lin = samples per C/A code bit in srx
+%doppler_range = range to scan (tipically 10k)
+%resolution = frequency scan step size
+%OUTPUT
+%aquired = SVs found
+%pr_delay = time delay in samples (for positioning) (multiply by TM for seconds)
+%phase_delay = frequency shift in samples (multiply by resolution for hz)
 
 L = 1;
 srx = srx(1:Lin:end);
@@ -56,7 +67,7 @@ set(h,'LineStyle','none')
 colormap jet
 colorbar
 caxis([0, 1023/2])
-t = sprintf('SV %d code and phase search', N_SV)
+t = sprintf('SV %d code and phase search', N_SV);
 title(t)
 zlabel('amplitud correlacion')
 xlabel('desvio frecuencia (hz)')
