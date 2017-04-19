@@ -23,13 +23,20 @@ Rpos = [ 3.894192036606761e+06 3.189618244369670e+05 5.024275884645306e+06]; % n
 % generate GPS signals
 
 sCA = CA_gen(L, visible_SV);
-%
-% modulation demo goes here
-%
+
+%generate doppler shift (use doppler function or create radom shift)
+%f_vec = 2000 * randn(1, length(visible_SV)); % std is set to 2000 hz
+
+%for better performance we can create s shift from a set of values
+shift_vals =(-1e4:500:1e4);
+f_vec = randi(length(shift_vals), 1, length(visible_SV));
+
+doppler_modulation = generate_doppler( f_vec, L );
+sCA_dop = sCA .* doppler_modulation;
 
 % pass signal through channel: distance + iono + tropo + clock
 
-[delay_CA, cicles, prop_delay_0, sat_clock_offset_0, sat_clock_rel_0, iono_T_0, trop_T_equiv_0] = gps_channel(head, eph, time, Rpos, sCA, L);
+[delay_CA, cicles, prop_delay_0, sat_clock_offset_0, sat_clock_rel_0, iono_T_0, trop_T_equiv_0] = gps_channel(head, eph, time, Rpos, sCA_dop, L);
 srx = sum(delay_CA, 1);
 
 % receiver. cicles are obtained as nav message
@@ -49,22 +56,19 @@ Tm = 1/fm;
 Lchip = 1023;
 Tchip = Lchip/f_chip;
 samples_chip = Lchip * L;
-%%
-[ index, pr_delay_abs_samples ] = SV_CAsearch( srx, L );
-%% phase time: error
 
-%% %% phase time: adquisition
+% %% phase // time: adquisition
+tic
 [ aquired, pr_delay_abs_samples, phase_delay ] = SV_CA_doppler_search( srx, L, 1e4, 500 );
-
-%%
-[ aquired, pr_delay, phase_delay  ] = plot_CA_fi_search(  srx, 4, L, 1e4, 500 )
+toc
+plot_CA_fi_search(  srx, 3, L, 1e4, 500 )
 
 %%
 ROOTDIR = fileparts(get_lib_path);
 almFile = strcat(ROOTDIR,'/files/almanac/W918.alm');
 ephFile = strcat(ROOTDIR,'/files/ephemeris/brdc0920.17n');
 
-[eph, head] = read_rinex_nav('brdc0920.17n', index);
+[eph, head] = read_rinex_nav(ephFile, aquired);
 
 satp = rinex2ecef(head, eph, time);
 SVx = satp(2,:);
