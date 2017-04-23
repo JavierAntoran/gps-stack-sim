@@ -56,8 +56,8 @@ srx = sum(delay_CA, 1);
 
 
 %%
-[ xyz_ecef ] = gps_receiver( ephFile, time, srx, cicles, L );
-xyz_ecef - Rpos
+[ xyz_ecef ] = gps_receiver( file, time, srx, nav_cicles, L )
+xyz_ecef
 %% GPS signal decoding
 
 

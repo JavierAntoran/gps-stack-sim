@@ -14,7 +14,7 @@ samples_chip = Lchip * L;
 
 [eph, head] = read_rinex_nav(file, index);
 
-satp = rinex2ecef(head, eph, time);
+satp = eph2ecef(eph, time);
 SVx = satp(2,:);
 SVy = satp(3,:);
 SVz = satp(4,:);
@@ -23,7 +23,7 @@ pSV = [SVx; SVy; SVz]';
 pr_delay_samples = mod(pr_delay_abs_samples, samples_chip);
 pr_delay = pr_delay_samples * Tm;
 
-pseudo_range0 = (pr_delay +  nav_cicles * Tchip)' * c;
+pseudo_range0 = (pr_delay +  nav_cicles(index) * Tchip)' * c;
 
 %We will apply the following formula:
 %pr0 = real_range + clock_drift + relativistic + iono + tropo
@@ -52,7 +52,7 @@ pseudo_range0 = (pseudo_range0 - R_rel_offset);
 
 % iterative decoding
 rec_pos = [0 0 0];
-[G0, delta_x, N_rec_pos(1, :) ,B0]=Gen_G_DX_XYZ_B(pSV, rec_pos, pseudo_range0);
+[G0, delta_x, N_rec_pos(1, :)]=iterate_pr2xyz(pSV, rec_pos, pseudo_range0);
 i = 1;
 
 pseudo_range(1,:) = pseudo_range0;
@@ -80,7 +80,7 @@ while (norm(delta_x(1:3)) > 1)
     pseudo_range(i + 1, :) = pseudo_range0 -  R_c_offset(i, :) - R_iono(i, :) - R_trop(i, :);
     
     i = i + 1;
-    [A_mat, delta_x, N_rec_pos(i, :)] = iterate_pr2xyz(pSV, rec_pos, pseudo_range(i, :);
+    [A_mat, delta_x, N_rec_pos(i, :)] = iterate_pr2xyz(pSV, rec_pos, pseudo_range(i, :));
     rec_pos = N_rec_pos(i, :);
 end
 

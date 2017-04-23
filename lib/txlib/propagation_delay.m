@@ -2,7 +2,7 @@ function [ delayVec ] = propagation_delay( head, eph, time, Rpos )
 
 c = 2.99792458e8;
 
-satp = rinex2ecef(head, eph, time);
+satp = eph2ecef(eph, time);
 
 SVx = satp(2,:);
 SVy = satp(3,:);

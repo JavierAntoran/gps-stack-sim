@@ -13,7 +13,7 @@ P_amb=101; %kilo pascal
 P_vap=.86;
 % satellite position ecef (I think)
 
-satp = rinex2ecef(head, eph, time);
+satp = eph2ecef(eph, time);
 SVx = satp(2,:);
 SVy = satp(3,:);
 SVz = satp(4,:);
