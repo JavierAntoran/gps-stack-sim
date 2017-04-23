@@ -10,8 +10,8 @@ function [ t ] = ltcmat( llh )
 	
     t = zeros(3,3);
       
-    t(1,:) = [-slat      clat       0.0 ];
-	t(2,:) = [-slon*clat -slon*slat clon];
+    t(1,:) = [-slon*clat -slon*slat clon];
+    t(2,:) = [-slat      clat       0.0 ];	
 	t(3,:) = [clon*clat  clon*slat  slon];
     
 

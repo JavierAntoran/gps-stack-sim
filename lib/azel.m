@@ -1,4 +1,7 @@
-function [ vis_sv ] = visible_sv( satp, rcv_lla, e_mask )
+function [ azel ] = azel( rcvpos, satpos )
+%AZEL Summary of this function goes here
+%   Detailed explanation goes here
+
 %VISIBLE_SV Summary of this function goes here
 %   Detailed explanation goes here
 sat_xyz = satp(2:4,:);
@@ -6,7 +9,7 @@ sat_xyz = satp(2:4,:);
 WGS84.a = 6378137;
 WGS84.e2 = (8.1819190842622e-2).^2;
 rcv_xyz = [ 0 0 0 ];
-[rcv_xyz(1) rcv_xyz(2) rcv_xyz(3)]= lla2xyz(rcv_lla(1), rcv_lla(2), rcv_lla(3),WGS84.a,WGS84.e2);
+[rcv_xyz(1) rcv_xyz(2) rcv_xyz(3)]= LLAtoXYZ(rcv_lla(1), rcv_lla(2), rcv_lla(3),WGS84.a,WGS84.e2);
 
 los = (sat_xyz - kron(rcv_xyz', ones(1,size(sat_xyz,2))));
 
@@ -21,6 +24,7 @@ ne = (los_enu(2,:).^2 + los_enu(1,:).^2).^(1/2);
 elevation = atan2(los_enu(3,:), ne);
     
 vis_sv = satp(1,find(rad2deg(elevation)>e_mask));
+
 
 end
 

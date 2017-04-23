@@ -177,22 +177,6 @@ z = y_pop.*sin(i);
 
 sat_xyz = [ eph.PRN; x; y; z ];
 
-
-sv_u=0:2*pi/100:2*pi;
-s_nu = numel(sv_u);
-r_o = kron(A'.*(1-(eph.e)'.^2),ones(1,s_nu))./(1+(eph.e)'*cos(sv_u));
-x_o = r_o.*kron(cos(sv_u), ones(sv_no,1));
-y_o = r_o.*kron(sin(sv_u), ones(sv_no,1));
-
-xs=x_o.*kron(cos(Omega)', ones(1,s_nu))-y_o.*kron((cos(i).*sin(Omega))', ones(1,s_nu));
-ys=x_o.*kron(sin(Omega)', ones(1,s_nu))+y_o.*kron((cos(i).*cos(Omega))', ones(1,s_nu));
-zs=y_o.*kron(sin(i)', ones(1,s_nu));
-
-orbits_xyz = zeros(s_nu, sv_no,3);
-orbits_xyz(:,:,1) = xs';
-orbits_xyz(:,:,2) = ys';
-orbits_xyz(:,:,3) = zs';
-
 orbit_parameters.svid = eph.PRN;
 orbit_parameters.E = E;
 orbit_parameters.A = A;
@@ -201,3 +185,4 @@ orbit_parameters.Omega = Omega;
 orbit_parameters.c = v;
 orbit_parameters.e = eph.e;
 orbit_parameters.r = r;
+orbit_parameters.u = u;
