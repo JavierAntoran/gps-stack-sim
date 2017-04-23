@@ -18,10 +18,13 @@ function [E,A]=Calc_Azimuth_Elevation(Pos_Rcv,Pos_SV)
 
 R=Pos_SV-Pos_Rcv;               %vector from Reciever to Satellite
 
-GPS = ECEF2GPS(Pos_Rcv);        %Lattitude and Longitude of Reciever
+GPS_Rcv = [ 0 0 0 ];
+[GPS_Rcv(1) GPS_Rcv(2) GPS_Rcv(3)] = xyz2lla(Pos_Rcv(1), Pos_Rcv(2), Pos_Rcv(3), WGS84.a, WGS84.e2);
+%Lattitude and Longitude of Reciever
 Lat=GPS(1);Lon=GPS(2);
 
-ENU=XYZ2ENU(R,Lat,Lon);
+lla2enu_tm = ltcmat(GPS_Rcv);
+ENU=ecef2enu(R,lla2enu_tm);
 Elevation=asin(ENU(3)/norm(ENU));
 Azimuth=atan2(ENU(1)/norm(ENU),ENU(2)/norm(ENU));
 E=Elevation;

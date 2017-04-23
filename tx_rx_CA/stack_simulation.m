@@ -21,11 +21,16 @@ ephFile = strcat(ROOTDIR,'/files/ephemeris/brdc0920.17n');
 time = gps_sec + head.leapSeconds;
 satp = eph2ecef(eph, time);
 
+% Ellipsoid parameters
+WGS84.a = 6378137;
+WGS84.e2 = (8.1819190842622e-2).^2;
+
 %define receiver position
 Rpos = [ 3.894192036606761e+06 3.189618244369670e+05 5.024275884645306e+06]; % ECEF
 
 %get visible SV
-rcv_lla = ECEF2GPS(Rpos);
+rcv_lla = [ 0 0 0 ];
+[rcv_lla(1) rcv_lla(2) rcv_lla(3)] = xyz2lla(Rpos(1), Rpos(2), Rpos(3), WGS84.a, WGS84.e2);
 e_mask = 30; %smallest angle between receiver and satellites for these to be visible 
 visible_SV = visible_sv( satp, rcv_lla, e_mask );
 [eph, head] = read_rinex_nav(ephFile, visible_SV);
@@ -44,7 +49,7 @@ sCA = CA_gen(L, visible_SV);
 %generate doppler shift (use doppler function or create radom shift)
 %f_vec = 2000 * randn(1, length(visible_SV)); % std is set to 2000 hz
 %for better performance we can create our shift from a predefined set of values
-shift_vals = (-1e4:500:1e4);
+shift_vals = 0;%(-1e4:500:1e4);
 f_vec = randi(length(shift_vals), 1, length(visible_SV));
 doppler_modulator = generate_doppler( shift_vals(f_vec), L );
 sCA_dop = sCA .* doppler_modulator; %add doppler shift
@@ -54,10 +59,6 @@ sCA_dop = sCA .* doppler_modulator; %add doppler shift
 [delay_CA, cicles, prop_delay_0, sat_clock_offset_0, sat_clock_rel_0, iono_T_0, trop_T_equiv_0] = gps_channel(head, eph, time, Rpos, sCA_dop, L);
 srx = sum(delay_CA, 1);
 
-
-%%
-[ xyz_ecef ] = gps_receiver_non_doppler( ephFile, time, srx, cicles, L );
-xyz_ecef - Rpos
 %% GPS signal decoding
 
 
@@ -71,7 +72,7 @@ samples_chip = Lchip * L;
 %obtain SV postions:
 % phase and time: adquisition
 tic
-[ aquired, pr_delay_abs_samples, phase_delay ] = SV_CA_doppler_search( srx, L, 1e4, 500 );
+[ aquired, pr_delay_abs_samples, phase_delay ] = SV_CA_doppler_search( srx, L, 1e4, 10000);
 toc
 plot_CA_fi_search(  srx, 3, L, 1e4, 500 )
 

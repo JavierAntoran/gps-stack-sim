@@ -1,8 +1,8 @@
 %This Function approximate Ionospheric Group Delay 
-%CopyRight By Moein Mehrtash
 %************************************************************************
 % Written by Moein Mehrtash, Concordia University, 3/21/2008            *
-% Email: moeinmehrtash@yahoo.com                                        *
+% Email: moeinmehrtash@yahoo.com     
+% Modified by Javier Antoran y Alberto Mur
 %************************************************************************           
 % ***********************************************************************           
 %      Function for   computing an Ionospheric range correction for the *
@@ -32,14 +32,19 @@
 %                        the L1 frequency                       (Sec)   *
 %     ==================================================================
 
-function [Delta_I]=Error_Ionospheric_Klobuchar(Pos_Rcv,Pos_SV,Alpha,Beta,GPS_Time)
-GPS_Rcv = ECEF2GPS(Pos_Rcv);
+function [Delta_I]=Error_Ionospheric_Klobuchar(Rpos,Pos_SV,Alpha,Beta,GPS_Time)
+% Ellipsoid parameters
+WGS84.a = 6378137;
+WGS84.e2 = (8.1819190842622e-2).^2;
+
+GPS_Rcv = [ 0 0 0 ];
+[GPS_Rcv(1) GPS_Rcv(2) GPS_Rcv(3)] = xyz2lla(Rpos(1), Rpos(2), Rpos(3), WGS84.a, WGS84.e2);
 Lat=GPS_Rcv(1)/pi;Lon=GPS_Rcv(2)/pi;   % semicircles unit Lattitdue and Longitude 
 S=size(Pos_SV);
 m=S(1);n=S(2);
 
 for i=1:m
-[El,A0]=Calc_Azimuth_Elevation(Pos_Rcv,Pos_SV(i,:));
+[El,A0] = azel(Rpos',Pos_SV(i,:)');
 E(i)=El/pi;                                            %SemiCircle Elevation
 A(i)=A0;                                               %SemiCircle Azimoth 
 % Calculate the Earth-Centered angle, Psi

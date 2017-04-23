@@ -21,7 +21,7 @@ function Delta_R_Trop=Error_Tropospheric_Hopfield(T_amb,P_amb,P_vap,Pos_Rcv,Pos_
 S=size(Pos_SV);
 m=S(1);n=S(2);
 for i=1:m
-  [E,A0]=Calc_Azimuth_Elevation(Pos_Rcv,Pos_SV(i,:));
+  [E,A0]=azel(Pos_Rcv',Pos_SV(i,:)');
   El(i)=E;                                                   %Elevation Rad
   A(i)=A0;                                                    %Azimoth Rad
 end
