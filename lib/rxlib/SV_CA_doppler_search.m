@@ -51,6 +51,9 @@ rdelay_samples_tmp=rdelay_samples_tmp(:);
 rdelay_samples = rdelay_samples_tmp(indices' + f_offset - 1);
 %
 aquired = checkSV(peak >= detect_lim);%detected SV index
+if (length(aquired) < 4)
+    fprintf('not enough SV detected, acquisition impossible\n')
+end
 pr_delay = rdelay_samples(peak >= detect_lim);
 phase_delay = f_offset(peak >= detect_lim);
 

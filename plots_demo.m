@@ -6,6 +6,8 @@ Lchip = 2^10 -1;
 base_clock = 10.23e6;
 f_carrier = 154 .* base_clock / 100;
 f_chip = base_clock / 10;
+%% plot vissible SV from postion on earth
+
 %% c/a code
 PRN = CA_gen(1);
 x = (-Lchip+1 : Lchip-1) / f_chip;
@@ -24,6 +26,8 @@ xlim([-f_chip, f_chip])
 ylabel('dB')
 grid on
 xlabel('hz')
+%% signal at receiver (after all error + doppler)
+
 %% Correlation between 2 codes
 x = (-Lchip+1 : Lchip-1) / f_chip;
 figure
@@ -41,7 +45,7 @@ grid on
 title('corr C/A SV1 con SV1\_delay')
 xlabel('t (s)')
 xlim([-Lchip, Lchip] / f_chip)
-%% 
+%% C/A code search for all SV
 
 delay = round(rand(1, size(PRN,1))*1023);
 delay_CA  = cell2mat(arrayfun(@(k) circshift(PRN(k,:), delay(k) , 2)', 1:size(PRN,1),'uni',0))';
@@ -61,7 +65,11 @@ title('busqueda satelites')
 zlabel('amplitud correlacion')
 ylabel('N satelite')
 xlabel('muestras')
-%% modulated signal generation
+%% code + phase search
+
+%%  equivalent spectral density (base band for better performance)
+
+%% modulated signal generation (carrier frequency/100 for better performance)
 base_clock = 10.23e6;
 f_carrier = 154 .* base_clock / 100;
 f_chip = base_clock / 10;
@@ -86,8 +94,8 @@ message_samples = message_dat(message_index);
 
 s_dat = carrier .* message_samples;
 s_CA = s_dat .* ca_samples;
-%% plotting spectral density
-figure
+%% plotting spectral density at real frequency / 100
+figure 
 fn = linspace(-1/(2*Tm), 1/(2*Tm), length(xcorr(carrier)));
 DEP_carrier = 10*log10(abs(fftshift(fft(xcorr(carrier)))));
 ref = max(DEP_carrier);

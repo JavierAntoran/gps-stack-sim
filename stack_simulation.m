@@ -30,7 +30,7 @@ Rpos = [ 3.894192036606761e+06 3.189618244369670e+05 5.024275884645306e+06]; % E
 
 %get visible SV
 rcv_lla = [ 0 0 0 ];
-[rcv_lla(1) rcv_lla(2) rcv_lla(3)] = xyz2lla(Rpos(1), Rpos(2), Rpos(3), WGS84.a, WGS84.e2);
+[rcv_lla(1), rcv_lla(2), rcv_lla(3)] = xyz2lla(Rpos(1), Rpos(2), Rpos(3), WGS84.a, WGS84.e2);
 e_mask = 30; %smallest angle between receiver and satellites for these to be visible 
 visible_SV = visible_sv( satp, rcv_lla, e_mask );
 [eph, head] = read_rinex_nav(ephFile, visible_SV);
@@ -41,7 +41,7 @@ base_clock = 10.23e6;
 %set sample frequency
 L = 50; %samples per CA bit. fm = fchip * L. More renults ib better precision
 
-%% GPS signal generation
+% GPS signal generation
 
 % generate C/A signals
 sCA = CA_gen(L, visible_SV);
@@ -49,32 +49,30 @@ sCA = CA_gen(L, visible_SV);
 %generate doppler shift (use doppler function or create radom shift)
 %f_vec = 2000 * randn(1, length(visible_SV)); % std is set to 2000 hz
 %for better performance we can create our shift from a predefined set of values
-shift_vals = 0;%(-1e4:500:1e4);
+shift_vals = (-1e4:5000:1e4);
 f_vec = randi(length(shift_vals), 1, length(visible_SV));
-doppler_modulator = generate_doppler( shift_vals(f_vec), L );
-sCA_dop = sCA .* doppler_modulator; %add doppler shift
+doppler_carrier = generate_doppler( shift_vals(f_vec), L );
+sCA_dop = sCA .* doppler_carrier; %add doppler shift
 
 % pass signal through channel: distance + iono + tropo + clock drift +
 % relativistic
 [delay_CA, cicles, prop_delay_0, sat_clock_offset_0, sat_clock_rel_0, iono_T_0, trop_T_equiv_0] = gps_channel(head, eph, time, Rpos, sCA_dop, L);
 srx = sum(delay_CA, 1);
+%% receiver: GPS signal decoding
 
-%% GPS signal decoding
-
-
+%set constants
 f_chip = base_clock / 10;
 fm = f_chip * L; %More results in better precision
 Tm = 1/fm;
-Lchip = 1023;
+Lchip = 2 .^ 10 - 1;
 Tchip = Lchip/f_chip;
 samples_chip = Lchip * L;
 
 %obtain SV postions:
 % phase and time: adquisition
-tic
-[ aquired, pr_delay_abs_samples, phase_delay ] = SV_CA_doppler_search( srx, L, 1e4, 10000);
-toc
-plot_CA_fi_search(  srx, 3, L, 1e4, 500 )
+
+[ aquired, pr_delay_abs_samples, phase_delay ] = SV_CA_doppler_search( srx, L, 1e4, 5000);
+plot_CA_fi_search(  srx, 6, L, 1e4, 5000 )
 
 %%
 ROOTDIR = fileparts(get_lib_path);
@@ -156,7 +154,7 @@ while (norm(delta_x(1:3)) > 1)
     clock_bias(i) = delta_x(4);
 end
 
-(Rpos - rec_pos)
+text = sprintf('Error, x: %d y: %d z: %d', (Rpos - rec_pos))
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% plot position convergence
 figure
@@ -189,6 +187,7 @@ legend('valor final', 'valor iteracion')
 grid on
 %% pseudorange correction convergence
 figure
+index = aquired;
 for i = 1:length(index)
     subplot(length(index), 1, i)
     plot(pseudo_range(:, i))
