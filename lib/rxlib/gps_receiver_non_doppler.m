@@ -1,4 +1,4 @@
-function [ xyz_ecef ] = gps_receiver( file, time, srx, nav_cicles, L )
+function [ xyz_ecef ] = gps_receiver_non_doppler( file, time, srx, nav_cicles, L )
 
 c = 2.99792458e8;
 base_clock = 10.23e6; %reloj atomico super DEP
@@ -13,7 +13,10 @@ samples_chip = Lchip * L;
 [ index, pr_delay_abs_samples ] = SV_CAsearch( srx, L );
 
 [eph, head] = read_rinex_nav(file, index);
-
+if numel(index) <= 4
+    fprintf('not enough SVs found\n')
+    return
+end
 satp = eph2ecef(eph, time);
 SVx = satp(2,:);
 SVy = satp(3,:);
@@ -23,7 +26,7 @@ pSV = [SVx; SVy; SVz]';
 pr_delay_samples = mod(pr_delay_abs_samples, samples_chip);
 pr_delay = pr_delay_samples * Tm;
 
-pseudo_range0 = (pr_delay +  nav_cicles(index) * Tchip)' * c;
+pseudo_range0 = (pr_delay +  nav_cicles * Tchip)' * c;
 
 %We will apply the following formula:
 %pr0 = real_range + clock_drift + relativistic + iono + tropo

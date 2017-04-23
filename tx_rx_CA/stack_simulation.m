@@ -28,7 +28,7 @@ Rpos = [ 3.894192036606761e+06 3.189618244369670e+05 5.024275884645306e+06]; % E
 rcv_lla = ECEF2GPS(Rpos);
 e_mask = 30; %smallest angle between receiver and satellites for these to be visible 
 visible_SV = visible_sv( satp, rcv_lla, e_mask );
-
+[eph, head] = read_rinex_nav(ephFile, visible_SV);
 %define constants
 c = 2.99792458e8;
 base_clock = 10.23e6;
@@ -44,9 +44,9 @@ sCA = CA_gen(L, visible_SV);
 %generate doppler shift (use doppler function or create radom shift)
 %f_vec = 2000 * randn(1, length(visible_SV)); % std is set to 2000 hz
 %for better performance we can create our shift from a predefined set of values
-shift_vals =(-1e4:500:1e4);
+shift_vals = (-1e4:500:1e4);
 f_vec = randi(length(shift_vals), 1, length(visible_SV));
-doppler_modulator = generate_doppler( f_vec, L );
+doppler_modulator = generate_doppler( shift_vals(f_vec), L );
 sCA_dop = sCA .* doppler_modulator; %add doppler shift
 
 % pass signal through channel: distance + iono + tropo + clock drift +
@@ -56,7 +56,7 @@ srx = sum(delay_CA, 1);
 
 
 %%
-[ xyz_ecef ] = gps_receiver( ephFile, time, srx, cicles, L );
+[ xyz_ecef ] = gps_receiver_non_doppler( ephFile, time, srx, cicles, L );
 xyz_ecef - Rpos
 %% GPS signal decoding
 
@@ -82,7 +82,7 @@ ephFile = strcat(ROOTDIR,'/files/ephemeris/brdc0920.17n');
 
 [eph, head] = read_rinex_nav(ephFile, aquired);
 
-satp = rinex2ecef(head, eph, time);
+satp = eph2ecef(eph, time);
 SVx = satp(2,:);
 SVy = satp(3,:);
 SVz = satp(4,:);
@@ -113,7 +113,7 @@ T_amb=20; %degrees celsius
 P_amb=101; %kilo pascal
 P_vap=.86;
 %delay because time in space is not the same as on earth
-clock_relativistic=Error_Satellite_Clock_Relavastic(F,eph.e,A,meanAnomaly,tgd); %sec 
+clock_relativistic = Error_Satellite_Clock_Relavastic(F,eph.e,A,meanAnomaly,tgd); %sec 
 %%
 R_rel_offset = clock_relativistic * c; 
 
