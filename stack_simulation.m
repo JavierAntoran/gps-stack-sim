@@ -33,6 +33,7 @@ rcv_lla = [ 0 0 0 ];
 [rcv_lla(1), rcv_lla(2), rcv_lla(3)] = xyz2lla(Rpos(1), Rpos(2), Rpos(3), WGS84.a, WGS84.e2);
 e_mask = 30; %smallest angle between receiver and satellites for these to be visible 
 visible_SV = visible_sv( satp, rcv_lla, e_mask );
+%visible_SV = 1:32
 [eph, head] = read_rinex_nav(ephFile, visible_SV);
 %define constants
 c = 2.99792458e8;
@@ -49,7 +50,7 @@ sCA = CA_gen(L, visible_SV);
 %generate doppler shift (use doppler function or create radom shift)
 %f_vec = 2000 * randn(1, length(visible_SV)); % std is set to 2000 hz
 %for better performance we can create our shift from a predefined set of values
-shift_vals = (-1e4:5000:1e4);
+shift_vals = 0;%(-1e4:5000:1e4);
 f_vec = randi(length(shift_vals), 1, length(visible_SV));
 doppler_carrier = generate_doppler( shift_vals(f_vec), L );
 sCA_dop = sCA .* doppler_carrier; %add doppler shift
@@ -72,7 +73,7 @@ samples_chip = Lchip * L;
 % phase and time: adquisition
 
 [ aquired, pr_delay_abs_samples, phase_delay ] = SV_CA_doppler_search( srx, L, 1e4, 5000);
-plot_CA_fi_search(  srx, 6, L, 1e4, 5000 )
+%plot_CA_fi_search(  srx, 23, L, 1e4, 500 )
 
 %%
 ROOTDIR = fileparts(get_lib_path);
@@ -165,7 +166,7 @@ line(xlim, [rec_pos(1),rec_pos(1)],'Color','r');
 title('acquisition x')
 xlabel('iterations')
 ylabel('(m)')
-legend('valor final', 'valor iteracion')
+legend('iteration value', 'final value')
 grid on
 subplot(3,1,2)
 %hold on
@@ -174,7 +175,7 @@ title('acquisition y')
 line(xlim, [rec_pos(2),rec_pos(2)],'Color','r');
 xlabel('iterations')
 ylabel('(m)')
-legend('valor final', 'valor iteracion')
+legend('iteration value', 'final value')
 grid on
 subplot(3,1,3)
 %hold on
@@ -183,7 +184,7 @@ title('acquisition z')
 line(xlim, [rec_pos(3),rec_pos(3)],'Color','r');
 xlabel('iterations')
 ylabel('(m)')
-legend('valor final', 'valor iteracion')
+legend('iteration value', 'final value')
 grid on
 %% pseudorange correction convergence
 figure
@@ -201,11 +202,11 @@ for i = 1:length(index)
 end
 
 %% pseudorrange error convergence **sat clock offset seems large**
-N_SV = 1;
+N_SV = aquired(1);
 subplot(3, 1, 1)
 plot(R_c_offset(:, N_SV))
 line(xlim, [c*sat_clock_offset_0(N_SV), c*sat_clock_offset_0(N_SV)], 'Color', 'r');
-t = sprintf('clock drift SV %d, (small diff because only dependent on ps because of time)', N_SV);
+t = sprintf('clock drift SV %d', N_SV);
 title(t)
 xlabel('iterations')
 ylabel('error (m)')

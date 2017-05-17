@@ -28,6 +28,7 @@ E_angle = 30;
 vis_sv = visible_sv(satp, rcv_lla, E_angle);
 
 % SV orbit and visibility plot
+
 plot_orbits(satp, orbit_parameters, image_file, vis_sv);
 
 % Ellipsoid parameters
