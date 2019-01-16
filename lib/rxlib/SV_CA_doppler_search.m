@@ -37,7 +37,7 @@ corrsearch = zeros(max_SV, n_steps, 2 * L * 1023 - 1);
 for i = checkSV
     a = mod(i - 1, max_SV) + 1;
     b = ceil(i / max_SV);
-    corrsearch(a, b, :) = xcorr(srx, test_sCA(a, b, :));
+    corrsearch(a, b, :) = xcorr(squeeze(srx), squeeze(test_sCA(a, b, :)));
 end
 
 

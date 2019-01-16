@@ -1,4 +1,4 @@
-%% lets go
+%% 
 clear all
 close all
 ROOTDIR = fileparts(get_lib_path);
