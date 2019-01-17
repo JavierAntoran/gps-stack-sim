@@ -4,48 +4,51 @@ Toolkit which allows for the simulation of GPS C/A code transmission and receive
 
 A full listing of provided functions can be found [here](#provided-functions). We include scripts which demonstrate following high level functionality: 
 
-* [SV position calculation](calculating-sv-position-and-visible-sv)
-* [Signal transmission, error/delay compensation and lock on](signal-transmission-from-sv,-receiver-delay-compensation-and-lock-on)
-* [Plotting a trajectory on a map](plotting-a-trajectory-on-a-map)
+* [SV position calculation](#calculating-sv-position-and-visible-sv)
+* [Signal transmission, error/delay compensation and lock on](#signal-transmission-from-sv,-receiver-delay-compensation-and-lock-on)
+* [Plotting a trajectory on a map](#plotting-a-trajectory-on-a-map)
 
-The [plots_demo.m](https://github.com/JavierAntoran/gps-stack-sim/blob/master/plots_demo.m) script generates most of the plots included in this README file.
+The [scripts/plots_demo.m](https://github.com/JavierAntoran/gps-stack-sim/blob/master/scripts/plots_demo.m) script generates most of the plots included in this README file.
 
 A set of Ephemeris and Almanac files are included in the [files](https://github.com/JavierAntoran/gps-stack-sim/tree/master/files) directory. An explanation of the information included in these files and how to download updated versions is also included.
 
-**Before running, add the /lib folder and sub-folders to the MATLAB path. Also add the /files folder if you want to use the provided Ephemeris files and Almanacs.**
+**Before running, add the /lib folder and sub-folders to the MATLAB path. Also add the /files folder if you want to use the provided world map, Ephemeris files and Almanacs.**
 
 ## Calculating SV position and visible SV
 
-[sv/sv.m](https://github.com/JavierAntoran/gps-stack-sim/blob/master/sv/sv.m) reads an Ephemeris file and calculates the position of all Space Vehicles (SVs). It then calculates which ones are visible from a certain point on earth with a certain visibility angle. We provide an [image](https://github.com/JavierAntoran/gps-stack-sim/blob/master/sv/land_ocean_ice_2048.png) of the earth's surface which is superimposed on a ellipsoidal model of earth. A valid ephemeris file is required. A vision elevation angle of 30 degrees is assumed in the following image.
+[scripts/sv_view.m](https://github.com/JavierAntoran/gps-stack-sim/blob/master/scripts/sv_view.m) reads an Ephemeris file and calculates the position of all Space Vehicles (SVs). It then calculates which ones are visible from a certain point on earth with a certain visibility angle. We provide an [image](https://github.com/JavierAntoran/gps-stack-sim/blob/master/files/land_ocean_ice_2048.png) of the earth's surface which is superimposed on a ellipsoidal model of earth. A valid ephemeris file is required. A vision elevation angle of 30 degrees is assumed in the following image.
 
 <img src="images/vis_sv_angle.png" width="600" height="320" />
 In this example, our receiver is located in Zaragoza, Spain.
 
 ## Signal transmission from SV, receiver error/delay compensation and lock on
 
-Given valid user position (ECEF), almanac and ephemeris files, the [stack_simulation.m](*?) script simulates the C/A code transmission, the channel, the acquisition procedure (warm start) and the receiver's position calculation. This is done using the visible SV from the receiver's position assuming a vision angle of 30 degrees.
+Given valid user position (ECEF), almanac and ephemeris files, the [scripts/stack_simulation.m](https://github.com/JavierAntoran/gps-stack-sim/blob/master/scripts/stack_simulation.m) script simulates the C/A code transmission, the channel, the acquisition procedure (warm start) and the receiver's position calculation. This is done using the visible SV from the receiver's position assuming a vision angle of 30 degrees.
 
 C/A codes are transmitted using BPSK at 1575.42 MHz. All operations are done at base band as simulating signals on the L2 band is very resource intensive.
 
 ### Transmitted signal
 
-We generate the Gold codes for every SV and multiply it with a 50 Hz navigation message. The signal is then modulated using BPSK. The resulting
+We generate the Gold codes for every SV and multiply it with a 50 Hz navigation message. The signal is then modulated using BPSK. 
 
+We plot the transmitted signal from SV1 in time. The carrier frequency is 1575.42 MHz. Simulating this signal is very memory intensive. In the following plot, the carrier frequency has been reduced by a factor of 100. 
 <img src="images/time_signal.png" width="400" height="320" />
 
+In the frequency domain:
 
+<img src="images/spectral_density.png" width="450" height="320" />
 
 ### Channel modeling
-We consider tropospheric delay, ionospheric delay, clock error and delay introduced by relativistic effects.
-
+We consider propagation delay, tropospheric delay, ionospheric delay, clock error and delay introduced by relativistic effects. SV1's signal is shown in base band in the following plot before and after passing through the channel. Its autocorrelation and power spectrum density (PSD) are also shown.
 <img src="images/tx_signal.png" width="800" height="320" />
-<img src="images/spectral_density.png" width="450" height="320" />
+
 
 ### Acquisition and position recovery
 
-The receiver starts of by searching for SV. This is done through a C/A code search in time and phase. The latter is necessary due to Doppler shift.
-
+The receiver starts of by searching for visible SV. This is done through a C/A code search in time and phase. The latter is necessary due to Doppler shift. The search procedure is done by correlation:
 <img src="images/code_phase_search.png" width="500" height="300" />
+
+Tracking is done with a delay lock loop (DLL) / phase lock loop (PLL) (Not implemented).  
 
 Once SV have been found, clock correction is applied to compensate for relativistic effects and receiver position is recovered using least squares. Since tropospheric and ionospheric delays depend on receiver position, this operation is done iteratively. Dilution of precision (DOP) values are calculated.
 
@@ -64,6 +67,10 @@ The script [CSVmap.m](https://github.com/JavierAntoran/gps-stack-sim/blob/master
 <img src="images/trajectory.png" width="400" height="280" />
 
 ## Provided functions
+
+All functions can be found under the [/lib](https://github.com/JavierAntoran/gps-stack-sim/tree/master/lib) directory. It contains the following subdirectories with the following functions. 
+
+*Note that this README is a work in progress and not all subdirectories and functions are listed.*
 
 ### GEO
 
