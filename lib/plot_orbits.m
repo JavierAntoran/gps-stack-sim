@@ -1,6 +1,5 @@
 function [ f ] = plot_orbits( sat_xyz, orbit_parameters, earth_surface_image, varargin)
-%PLOT_ORBITS Summary of this function goes here
-%   Detailed explanation goes here
+%PLOT_ORBITS 
 % Based on:
 % Textured 3D Earth example
 %
@@ -8,8 +7,7 @@ function [ f ] = plot_orbits( sat_xyz, orbit_parameters, earth_surface_image, va
 % 8 Sep 2004
 % Revised 9 March 2006, 31 Jan 2006, 16 Oct 2013
 % **************************************************************************
-% Written by Alberto       
-% Email: moeinmehrtash@yahoo.com       
+% Written by Alberto 
 
 
 vis_sv = [];

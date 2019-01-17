@@ -1,9 +1,11 @@
-function [sat_xyz, orbit_parameters, orbits_xyz] = eph2ecef(eph ,tsv) 
+function [sat_xyz, orbit_parameters] = eph2ecef(eph ,tsv) 
 
-%EPH2ECEF Summary of this function goes here
-%   Detailed explanation goes here
+%EPH2ECEF Compute sv orbits and position for the specified time
+%
+% eph Ephemerides file
+% tsv GPS time
 
-sv_no = numel(eph.PRN);
+
 
 
 % Constant Parameter of this function

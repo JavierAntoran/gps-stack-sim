@@ -3,18 +3,13 @@ function [ lat, lon, alt ] = xyz2lla( x, y, z, a, e2 )
 %            cartesian coordinates to latitude, longitude,
 %            and altitude
 %
-% USAGE:
-% [lat,lon,alt] = ECEF2GPS(x,y,z)
-%
-% lat(phi) = geodetic latitude (radians)
-% lon(lambda) = longitude (radians)
-% alt = height above WGS84 ellipsoid (m)
 % x = ECEF X-coordinate (m)
 % y = ECEF Y-coordinate (m)
 % z = ECEF Z-coordinate (m)
+% a Semi-major axis
+% e2 First eccentricity squared
 %
-% Notes: (1) This function assumes the WGS84 model.
-%        (2) Latitude is customary geodetic (not geocentric).
+% Notes: (2) Latitude is customary geodetic (not geocentric).
 %        (3) Inputs may be scalars, vectors, or matrices of the same
 %            size and shape. Outputs will have that same size and shape.
 %        (4) Tested but no warranty; use at your own risk.

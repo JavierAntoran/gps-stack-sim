@@ -65,6 +65,45 @@ The script [CSVmap.m](https://github.com/JavierAntoran/gps-stack-sim/blob/master
 
 ## Provided functions
 
+### GEO
+
+[ enu ] = ecef2enu( xyz, tmat ) % Convert Earth-centered Earth-Fixed to Local east, north, up (ENU)
+
+[ azel ] = enu2azel( enu ) % Convert Eeast-North-Up to Azimuth + Elevation
+
+[x, y, z] = lla2xyz( fi, lambda, h, a, e2 ) % Convert geodetic latitude, longitude, altitude (LLA) coordinates to XYZ
+
+[ lat, lon, alt ] = xyz2lla( x, y, z, a, e2 ) % Vonvert earth-centered earth-fixed (ECEF) cartesian coordinates to latitude, longitude, and altitude
+
+[ t ] = ltcmat( llh ) % Compute the intermediate matrix for LLH to ECEF
+
+[ dist ] = ECEFrange( SVx, SVy, SVz, gx, gy, gz ) % Calculates distance between observer and SV
+
+### RINEX
+
+[EPH ,header] = read_rinex_nav( filename, sv_IDs) % Reads an ephemerides file and get the information of the requested space vehicles.
+
+[ gps_week, gps_seconds ] = cal2gpstime(varargin) % Calculates GPS seconds from UTC
+
+[ dt ] = gpst2utc( week_number, reference_time, leap_seconds ) % Calculates UTC from GPS seconds
+
+[sat_xyz, orbit_parameters] = eph2ecef(eph ,tsv) % Compute sv orbits and sv position in ECEF for the specified time (tsv) from ephemerides
+
+### TC Lib
+
+[sCA] = CA_gen(pulseLength, SV_vec) % Generates C/A codes for all SVs
+
+[ modulator ] = generate_doppler( f_vec, L ) % generates a matrix to shift CA codes in frequency
+
+[delay_CA, cicles, prop_delay, sat_clock_offset, sat_clock_rel, iono_T, trop_T_equiv] = gps_channel(head, eph, time, Rpos, sCA, L) % Get TX channel including tropo, iono, clock error and relativistic clock
+
+### OTHERS
+
+[ vis_sv ] = visible_sv( satp, rcv_lla, e_mask ) % Search for visible SV given an observation position and elevation
+
+[ f ] = plot_orbits( sat_xyz, orbit_parameters, earth_surface_image, varargin) % Plots SV orbits around the globe
+
+
 ## Resources 
 
 * Some of our functions use code from the **GPS Navigation Toolbox** by Moein Mehrtash https://es.mathworks.com/matlabcentral/fileexchange/41364-gps-navigation-toolbox?focused=3785211&tab=function

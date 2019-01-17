@@ -4,7 +4,7 @@ clear all
 ROOTDIR = fileparts(get_lib_path);
 
 ephFile = strcat(ROOTDIR,'/files/ephemeris/brdc0920.17n');
-image_file = fullfile(ROOTDIR,'/sv/land_ocean_ice_2048.png');
+image_file = fullfile(ROOTDIR,'/files/land_ocean_ice_2048.png');
 
 % Read rinex navigation file
 [r_eph, r_head] = read_rinex_nav(ephFile, 1:32);
@@ -19,7 +19,7 @@ gps_sec = gps_sec+r_head.leapSeconds;
 
 % Receiver position in LLA
 rcv_lla = [ deg2rad(41.6835944) deg2rad(-0.8885864) 201];
-%rcv_lla = [ deg2rad(-36.848461) deg2rad(174.763336) 21];
+rcv_lla = [ deg2rad(-36.848461) deg2rad(174.763336) 21];
 
 % Elevatoin angle
 E_angle = 30;
@@ -43,25 +43,27 @@ rcv_xyz = [ 0 0 0 ];
 % Plot receiver position
 scatter3(rcv_xyz(1), rcv_xyz(2), rcv_xyz(3), 'yo')
 
-%% Plot visibility cone (Not working)
-h = 1;
-r = h/cosd(90-E_angle);
-m = h/r;
-[R,A] = meshgrid(linspace(0,2.5e7,10),linspace(0,2*pi,25));
+%% Plot visibility cone
+r = linspace(0,2.5e7,10) ; % Distance from earth to above SV (10 segments) 
+th = linspace(0,2*pi); % Circunference points
+[R,T] = meshgrid(r,th) ; % Mesh in pola coordinates
+P = deg2rad(90-E_angle); % Constant PHI angle
 
-X = (R .* cos(A));
-Y = R .* sin(A);
-Z = (m*R);
+% Get cartesian coordinates from polar
+X = R.*cos(T)*sin(P);
+Y = R.*sin(T)*sin(P) ;
+Z = R*cos(P);
 
-
+% Translation matrix
 A=eye(3);
 B = ltcmat(rcv_lla);
-C = inv(B')*A'
+C = A/B;
 
 XP = zeros(size(X));
 YP = zeros(size(Y));
 ZP = zeros(size(Z));
 
+% Apply translation for each cone point
 for i=1:size(X,1)
     for j=1:size(X,2)
         tmp = C*[X(i,j) Y(i,j) Z(i,j)]';
@@ -71,4 +73,4 @@ for i=1:size(X,1)
     end
 end
 
-hSurface = surf(XP+rcv_xyz(1),YP+ rcv_xyz(2),ZP+ rcv_xyz(3),'FaceColor','g','FaceAlpha',.4,'EdgeAlpha',.4)
+hSurface = surf(XP+rcv_xyz(1),YP+ rcv_xyz(2),ZP+ rcv_xyz(3),'FaceColor','g','FaceAlpha',.4,'EdgeAlpha',.4);

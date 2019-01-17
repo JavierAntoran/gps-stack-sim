@@ -16,7 +16,7 @@ ephFile = strcat(ROOTDIR,'/files/ephemeris/brdc0920.17n');
 ROOTDIR = fileparts(get_lib_path);
 
 ephFile = strcat(ROOTDIR,'/files/ephemeris/brdc0920.17n');
-image_file = fullfile(ROOTDIR,'/sv/land_ocean_ice_2048.png');
+image_file = fullfile(ROOTDIR,'/files/land_ocean_ice_2048.png');
 
 % Read rinex navigation file
 [r_eph, r_head] = read_rinex_nav(ephFile, 1:32);
@@ -56,24 +56,26 @@ rcv_xyz = [ 0 0 0 ];
 scatter3(rcv_xyz(1), rcv_xyz(2), rcv_xyz(3), 'yo')
 
 % Plot visibility cone
-h = 1;
-r = h/cosd(90-E_angle);
-m = h/r;
-[R,A] = meshgrid(linspace(0,2.5e7,10),linspace(0,2*pi,25));
+r = linspace(0,2.5e7,10) ; % Distance from earth to above SV (10 segments) 
+th = linspace(0,2*pi); % Circunference points
+[R,T] = meshgrid(r,th) ; % Mesh in pola coordinates
+P = deg2rad(90-E_angle); % Constant PHI angle
 
-X = (R .* cos(A));
-Y = R .* sin(A);
-Z = (m*R);
+% Get cartesian coordinates from polar
+X = R.*cos(T)*sin(P);
+Y = R.*sin(T)*sin(P) ;
+Z = R*cos(P);
 
-
+% Translation matrix
 A=eye(3);
 B = ltcmat(rcv_lla);
-C = inv(B')*A'
+C = A/B;
 
 XP = zeros(size(X));
 YP = zeros(size(Y));
 ZP = zeros(size(Z));
 
+% Apply translation for each cone point
 for i=1:size(X,1)
     for j=1:size(X,2)
         tmp = C*[X(i,j) Y(i,j) Z(i,j)]';
