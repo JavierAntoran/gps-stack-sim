@@ -5,7 +5,7 @@ Toolkit which allows for the simulation of GPS C/A code transmission and receive
 A full listing of provided functions can be found [here](#provided-functions). We include scripts which demonstrate following high level functionality: 
 
 * [SV position calculation](#calculating-sv-position-and-visible-sv)
-* [Signal transmission, error/delay compensation and lock on](#signal-transmission-from-sv,-receiver-delay-compensation-and-lock-on)
+* [Signal transmission, error/delay compensation and lock on](#signal-transmission-from-sv-receiver-delay-compensation-and-lock-on)
 * [Plotting a trajectory on a map](#plotting-a-trajectory-on-a-map)
 
 The [scripts/plots_demo.m](https://github.com/JavierAntoran/gps-stack-sim/blob/master/scripts/plots_demo.m) script generates most of the plots included in this README file.
@@ -32,31 +32,31 @@ C/A codes are transmitted using BPSK at 1575.42 MHz. All operations are done at 
 We generate the Gold codes for every SV and multiply it with a 50 Hz navigation message. The signal is then modulated using BPSK. 
 
 We plot the transmitted signal from SV1 in time. The carrier frequency is 1575.42 MHz. Simulating this signal is very memory intensive. In the following plot, the carrier frequency has been reduced by a factor of 100. 
-<img src="images/time_signal.png" width="400" height="320" />
+<img src="images/time_signal.png" width="280" height="200" />
 
 In the frequency domain:
 
-<img src="images/spectral_density.png" width="450" height="320" />
+<img src="images/spectral_density.png" width="300" height="200" />
 
 ### Channel modeling
 We consider propagation delay, tropospheric delay, ionospheric delay, clock error and delay introduced by relativistic effects. SV1's signal is shown in base band in the following plot before and after passing through the channel. Its autocorrelation and power spectrum density (PSD) are also shown.
-<img src="images/tx_signal.png" width="800" height="320" />
+<img src="images/tx_signal.png" width="700" height="280" />
 
 
 ### Acquisition and position recovery
 
 The receiver starts of by searching for visible SV. This is done through a C/A code search in time and phase. The latter is necessary due to Doppler shift. The search procedure is done by correlation:
-<img src="images/code_phase_search.png" width="500" height="300" />
+<img src="images/code_phase_search.png" width="400" height="240" />
 
 Tracking is done with a delay lock loop (DLL) / phase lock loop (PLL) (Not implemented).  
 
 Once SV have been found, clock correction is applied to compensate for relativistic effects and receiver position is recovered using least squares. Since tropospheric and ionospheric delays depend on receiver position, this operation is done iteratively. Dilution of precision (DOP) values are calculated.
 
 The following plot shows the convergence of receiver position and pseudoranges from the receiver to each SV.
-<img src="images/xyz_sv_acq.png" width="800" height="320" />
+<img src="images/xyz_sv_acq.png" width="600" height="220" />
 
 The following plot shows the convergence of the calculated value for each of the sources of error we model.
-<img src="images/errors_SV.png" width="400" height="320" />
+<img src="images/errors_SV.png" width="300" height="220" />
 
 
 
@@ -64,7 +64,7 @@ The following plot shows the convergence of the calculated value for each of the
 
 The script [CSVmap.m](https://github.com/JavierAntoran/gps-stack-sim/blob/master/maps/CSVmap.m) plots a trajectory, given as ECEF (x, y, z) coordinates, on a map in ETRS89 UTM coordinates. The following files are required but not provided: A .csv file with the trajectory, a map file in any format and a corresponding .tfw file.
 
-<img src="images/trajectory.png" width="400" height="280" />
+<img src="images/trajectory.png" width="300" height="220" />
 
 ## Provided functions
 
